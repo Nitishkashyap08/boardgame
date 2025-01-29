@@ -57,7 +57,7 @@ pipeline {
         DOCKER_IMAGE = "sriraju12/boardgame-app:${BUILD_NUMBER}"
     }
             steps {
-                sh "trivy image --format table -o trivy-image-report.html ${DOCKER_IMAGE}"
+                sh "/opt/homebrew/bin/trivy image --format table -o trivy-image-report.html ${DOCKER_IMAGE}"
             }
         }
 
