@@ -53,10 +53,7 @@ pipeline {
     }
 
     stage('Docker Image Scan') {
-        environment {
-        DOCKER_IMAGE = "sriraju12/boardgame-app:${BUILD_NUMBER}"
-    }
-            steps {
+       steps {
                 sh "/opt/homebrew/bin/trivy image --format table -o trivy-image-report.html ${DOCKER_IMAGE}"
             }
         }
