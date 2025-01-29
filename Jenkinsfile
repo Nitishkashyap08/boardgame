@@ -15,6 +15,7 @@ pipeline {
 
         stage('Scan File System') {
             steps {
+                sh 'export PATH=$PATH:/opt/homebrew/bin'
                 sh "trivy fs --format table -o trivy-fs-reports.html ."
             }
         }
