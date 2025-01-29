@@ -5,6 +5,9 @@ pipeline {
         jdk 'Jdk17'
         maven 'Maven3'
     }
+     environment {
+        DOCKER_IMAGE = "sriraju12/boardgame-app:${BUILD_NUMBER}"
+    }
 
     stages {
         stage('Check Out') {
@@ -42,9 +45,6 @@ pipeline {
     }
 
     stage('Build Docker Image') {
-        environment {
-        DOCKER_IMAGE = "sriraju12/boardgame-app:${BUILD_NUMBER}"
-    }
       steps {
         script {
               docker.build("${DOCKER_IMAGE}")
