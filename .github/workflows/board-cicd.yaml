@@ -128,7 +128,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: false
+          push: true
           tags: ${{ vars.DOCKER_USERNAME }}/github-board-game:${{ github.sha }}
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
@@ -143,13 +143,7 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
-      - name: Push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ vars.DOCKER_USERNAME }}/github-board-game:${{ github.sha }}
-          platforms: linux/amd64,linux/arm64    
+    
 
   
         
