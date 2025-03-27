@@ -18,13 +18,10 @@ jobs:
       - name: Run Trivy Vulnerability scan
         uses: aquasecurity/trivy-action@master
         with:
-          scan_type: "fs"
-          format: table
+          scan-type: 'fs'
           scan-ref: '.'
-          vuln-type: 'os,library'
           severity: "CRITICAL,HIGH"
-          ignore-unfixed: true
-
+          
       - name: Upload Trivy Report
         uses: actions/upload-artifact@v4
         with:
