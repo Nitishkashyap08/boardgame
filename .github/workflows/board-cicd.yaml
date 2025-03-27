@@ -134,7 +134,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
 
       - name: scan docker image using trivy
-        uses: aquasecurity/trivy-action@v0.30.0
+        uses: aquasecurity/trivy-action@latest
         with:
           image-ref: ${{ vars.DOCKER_USERNAME }}/github-board-game:${{ github.sha }}
           format: table
