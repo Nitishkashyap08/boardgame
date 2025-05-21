@@ -5,7 +5,7 @@ pipeline {
         jdk 'jdk17'
     }
     environment {
-        DOCKER_NAME = "kashyapnitsh08"
+        DOCKER_NAME = "nitishkashyap08"
         JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64"
         PATH = "${JAVA_HOME}/bin:${env.PATH}"
         DOCKER_IMAGE = "${DOCKER_NAME}/myimage:latest"
