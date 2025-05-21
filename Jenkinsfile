@@ -2,6 +2,7 @@ pipeline {
     agent any
     tools {
         maven 'mymaven'
+        jdk 'jdk11'
     }
     environment {
         DOCKER_NAME = "kashyapnitsh08"
