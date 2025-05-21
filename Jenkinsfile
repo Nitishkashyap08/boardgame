@@ -6,6 +6,9 @@ pipeline {
     }
     environment {
         DOCKER_NAME = "kashyapnitsh08"
+        JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64"
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+        DOCKER_IMAGE = "${DOCKER_NAME}/myimage:latest"
     }
     stages {
         stage('Checkout Git') {
@@ -14,11 +17,11 @@ pipeline {
             }
         }
         stage('Verify Java') {
-    steps {
-        sh 'java -version'
-        sh 'echo $JAVA_HOME'
-    }
-}
+            steps {
+                sh 'java -version'
+                sh 'echo $JAVA_HOME'
+            }
+        }
         stage('Clean and Build') {
             steps {
                 sh 'mvn clean install'
@@ -31,14 +34,14 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                sh 'docker build -t ${DOCKER_NAME}/myimage:latest .'
+                sh "docker build -t ${DOCKER_IMAGE} ."
             }
         }
         stage('Docker Push') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerCredID', usernameVariable: 'DOCKER_NAME', passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_NAME --password-stdin'
-                    sh 'docker push $DOCKER_NAME/myimage:latest'
+                withCredentials([usernamePassword(credentialsId: 'dockerCredID', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh "docker push ${DOCKER_IMAGE}"
                 }
             }
         }
