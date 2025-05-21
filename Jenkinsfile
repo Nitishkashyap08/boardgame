@@ -13,6 +13,12 @@ pipeline {
                 git url: 'https://github.com/Nitishkashyap08/boardgame.git', branch: 'main'
             }
         }
+        stage('Verify Java') {
+    steps {
+        sh 'java -version'
+        sh 'echo $JAVA_HOME'
+    }
+}
         stage('Clean and Build') {
             steps {
                 sh 'mvn clean install'
