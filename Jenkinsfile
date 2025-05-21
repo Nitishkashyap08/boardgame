@@ -1,88 +1,39 @@
 pipeline {
     agent any
-
     tools {
-        jdk 'Jdk17'
-        maven 'Maven3'
+        maven 'mymaven'
     }
-     environment {
-        DOCKER_IMAGE = "sriraju12/boardgame-app:${BUILD_NUMBER}"
+    environment {
+        DOCKER_NAME = "kashyapnitsh08"
     }
-
     stages {
-        stage('Check Out') {
+        stage('Checkout Git') {
             steps {
-                git branch: 'main', credentialsId: 'github-tokens', url: 'https://github.com/sriraju12/boardgame.git'
+                git url: 'https://github.com/Nitishkashyap08/boardgame.git', branch: 'main'
             }
         }
-
-        stage('Scan File System') {
+        stage('Clean and Build') {
             steps {
-                sh "/opt/homebrew/bin/trivy fs --format table -o trivy-fs-reports.html ."
+                sh 'mvn clean install'
             }
         }
-
-        stage('Build Application') {
-            steps {
-                sh 'mvn clean package'
-            }
-        }
-
-        stage('Test Application') {
+        stage('Test') {
             steps {
                 sh 'mvn test'
             }
         }
-
-        stage('Sonarqube Analysis'){
-          steps {
-            script {
-                withSonarQubeEnv(credentialsId: 'jenkins-sonar-token'){
-                    sh 'mvn sonar:sonar'
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t ${DOCKER_NAME}/myimage:latest .'
+            }
+        }
+        stage('Docker Push') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerCredID', usernameVariable: 'DOCKER_NAME', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_NAME --password-stdin'
+                    sh 'docker push $DOCKER_NAME/myimage:latest'
                 }
             }
         }
     }
-
-    stage('Build Docker Image') {
-      steps {
-        script {
-              docker.build("${DOCKER_IMAGE}")
-        }
-      }
-    }
-
-    stage('Docker Image Scan') {
-       steps {
-                sh "/opt/homebrew/bin/trivy image --format table -o trivy-image-report.html ${DOCKER_IMAGE}"
-            }
-        }
-
-    stage('Push Docker Image') {
-        environment {
-        REGISTRY_CREDENTIALS = credentials('dockerhub-token')
-    }
-      steps {
-        script {
-              sh 'docker context use default'  
-              def dockerImage = docker.image("${DOCKER_IMAGE}")
-              docker.withRegistry('https://index.docker.io/v1/', "dockerhub-token") {
-                 dockerImage.push()
-            }
-        }
-      }
-    }
-  }
-
-  post {
-     always {
-        emailext attachLog: true,
-            subject: "'${currentBuild.result}'",
-            body: "Project: ${env.JOB_NAME}<br/>" +
-                "Build Number: ${env.BUILD_NUMBER}<br/>" +
-                "URL: ${env.BUILD_URL}<br/>",
-            to: 'rajukrishnamsetty9@gmail.com',                                
-            attachmentsPattern: 'trivy-fs-reports.html,trivy-image-report.html'
-        }
-    }   
 }
